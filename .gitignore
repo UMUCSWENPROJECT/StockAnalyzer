@@ -1,4 +1,7 @@
 *.DS_Store
 target/*
 nbproject/*
-stockreporter.prod
+stockreporter.prod*
+*.pdf
+*.png
+*.db
