@@ -1,0 +1,89 @@
+//// -- LEVEL 1
+//// -- Tables and References
+
+// Creating tables
+Table sources as SRC {
+  source_name varchar [pk]
+  
+  //created_at timestamp
+  //country_code int
+}
+
+Table stock_ticker as STIC {
+  ticker_id int [pk]
+  symbol varchar
+  ticker_name varchar
+   // [ref: > U.id] // inline relationship (many-to-one)
+}
+
+Table stock_summary {
+  source varchar [pk, ref: > SRC.source_name]
+  ticker varchar [pk, ref: > STIC.ticker_name]
+  stock_record_date text [pk]
+  prev_close_price real
+  open_price real
+  bid_price real
+  ask_price real
+  days_range_min real
+  days_range_max real
+  fifty_two_week_min real
+  fifty_two_week_max real
+  volume bigint
+  avg_volume bigint
+  market_cap real
+  beta_coefficient real
+  pe_ratio real
+  eps real
+  earning_date text
+  dividend_yield real
+  ex_dividend_date text
+  one_year_target_est real
+ }
+ 
+ // VIEWS
+ 
+ Table summary_view {
+   ticker varchar
+   summary_date text
+   prev_close_price real
+   open_price real
+   bid_price real
+   ask_price real
+   days_range_min real
+   days_range_max real
+   fifty_two_week_min real
+   fifty_two_week_max real
+   volume bigint
+   avg_volume bigint
+   market_cap real
+   beta_coefficient real
+   pe_ratio real
+   eps real
+   earning_date text
+   dividend_yield real
+   ex_dividend_date text
+   one_year_target_est real
+ }
+ 
+ Table curr_date_summary_view {
+   ticker varchar
+   summary_date text
+   prev_close_price real
+   open_price real
+   bid_price real
+   ask_price real
+   days_range_min real
+   days_range_max real
+   fifty_two_week_min real
+   fifty_two_week_max real
+   volume bigint
+   avg_volume bigint
+   market_cap real
+   beta_coefficient real
+   pe_ratio real
+   eps real
+   earning_date text
+   dividend_yield real
+   ex_dividend_date text
+   one_year_target_est real
+ }
