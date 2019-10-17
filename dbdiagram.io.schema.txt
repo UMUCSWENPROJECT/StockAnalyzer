@@ -2,23 +2,21 @@
 //// -- Tables and References
 
 // Creating tables
-Table sources as SRC {
+Table STOCK_SOURCE as SRC {
   source_name varchar [pk]
   
-  //created_at timestamp
-  //country_code int
 }
 
-Table stock_ticker as STIC {
-  ticker_id int [pk]
-  symbol varchar
+Table STOCK_TICKER as STIC {
+  symbol varchar [pk]
   ticker_name varchar
    // [ref: > U.id] // inline relationship (many-to-one)
 }
 
-Table stock_summary {
+Table STOCK_SUMMARY {
   source varchar [pk, ref: > SRC.source_name]
-  ticker varchar [pk, ref: > STIC.ticker_name]
+  ticker_symbol varchar [pk, ref: > STIC.symbol]
+  ticker_name varchar [pk, ref: > STIC.ticker_name]
   stock_record_date text [pk]
   prev_close_price real
   open_price real
@@ -39,11 +37,24 @@ Table stock_summary {
   ex_dividend_date text
   one_year_target_est real
  }
- 
+
+ Table HISTORICAL {
+  source varchar [pk, ref: > SRC.source_name]
+  ticker_symbol varchar [pk, ref: > STIC.symbol]
+  ticker_name varchar [pk, ref: > STIC.ticker_name]
+  historical_date text [pk]
+  open real
+  high real
+  low real
+  close real
+  adj_close real
+  volume bigint
+ }
  // VIEWS
  
  Table summary_view {
-   ticker varchar
+   ticker_symbol varchar
+   ticker_name varchar
    summary_date text
    prev_close_price real
    open_price real
@@ -65,8 +76,9 @@ Table stock_summary {
    one_year_target_est real
  }
  
- Table curr_date_summary_view {
-   ticker varchar
+ Table last_run_summary_view {
+   ticker_symbol varchar
+   ticker_name varchar
    summary_date text
    prev_close_price real
    open_price real
