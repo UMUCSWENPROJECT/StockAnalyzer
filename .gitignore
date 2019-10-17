@@ -5,3 +5,4 @@ stockreporter.prod*
 *.pdf
 *.png
 *.db
+*.db*
