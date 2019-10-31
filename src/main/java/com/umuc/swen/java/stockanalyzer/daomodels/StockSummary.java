@@ -13,7 +13,13 @@ import java.math.BigDecimal;
  */
 public class StockSummary implements Serializable {
         
-        private long summaryId;
+        private String source;
+        
+        private String ticker_symbol;
+        
+        private String ticker_name;
+        
+        private String stock_record_date;
 	
 	private BigDecimal prevClosePrice;
 	
@@ -50,16 +56,38 @@ public class StockSummary implements Serializable {
 	private String exDividentDate;
 	
 	private BigDecimal oneYearTargetEst;
-	
-	private long stockDtMapId;
 
-	public long getSummaryId() {
-		return summaryId;
+	public String getSource() {
+		return source;
 	}
 
-	public void setSummaryId(long summaryId) {
-		this.summaryId = summaryId;
+	public void setSource(String source) {
+		this.source = source;
 	}
+        
+        public String getTicker_symbol() {
+            return ticker_symbol;
+        }
+        
+        public void setTicker_symbol(String ticker_symbol) {
+            this.ticker_symbol = ticker_symbol;
+        }
+        
+        public String getTicker_name() {
+            return ticker_name;
+        }
+        
+        public void setTicker_name(String ticker_name) {
+            this.ticker_name = ticker_name;
+        }
+        
+        public String getStock_record_date() {
+            return stock_record_date;
+        }
+        
+        public void setStock_record_date(String stock_record_date) {
+            this.stock_record_date = stock_record_date;
+        }
 
 	public BigDecimal getPrevClosePrice() {
 		return prevClosePrice;
@@ -205,23 +233,15 @@ public class StockSummary implements Serializable {
 		this.oneYearTargetEst = oneYearTargetEst;
 	}
 
-	public long getStockDtMapId() {
-		return stockDtMapId;
-	}
-
-	public void setStockDtMapId(long stockDtMapId) {
-		this.stockDtMapId = stockDtMapId;
-	}
-
 	@Override
 	public String toString() {
-		return "StockSummary [summaryId=" + summaryId + ", prevClosePrice=" + prevClosePrice + ", openPrice="
+		return "StockSummary [source=" + source + ", ticker_symbol=" + ticker_symbol + ", ticker_name=" + ticker_name + ", stock_record_date=" + stock_record_date + ", prevClosePrice=" + prevClosePrice + ", openPrice="
 				+ openPrice + ", bidPrice=" + bidPrice + ", askPrice=" + askPrice + ", daysRangeMin=" + daysRangeMin
 				+ ", daysRangeMax=" + daysRangeMax + ", fiftyTwoWeeksMin=" + fiftyTwoWeeksMin + ", fiftyTwoWeeksMax="
 				+ fiftyTwoWeeksMax + ", volume=" + volume + ", avgVolume=" + avgVolume + ", marketCap=" + marketCap
 				+ ", betaCoefficient=" + betaCoefficient + ", peRatio=" + peRatio + ", eps=" + eps + ", earningDate="
 				+ earningDate + ", dividentYield=" + dividentYield + ", exDividentDate=" + exDividentDate
-				+ ", oneYearTargetEst=" + oneYearTargetEst + ", stockDtMapId=" + stockDtMapId + "]";
+				+ ", oneYearTargetEst=" + oneYearTargetEst + "]";
 	}
     
 }

@@ -8,7 +8,13 @@ import java.math.BigDecimal;
  */
 public class StockHistorical implements Serializable {
     
-    private long historicalId;
+    private String source;
+    
+    private String ticker_symbol;
+    
+    private String ticker_name;
+    
+    private String historical_date; 
     
     private BigDecimal open;
     
@@ -21,23 +27,37 @@ public class StockHistorical implements Serializable {
     private BigDecimal adjClose;
     
     private long volume;
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getTicker_symbol() {
+        return ticker_symbol;
+    }
+
+    public void setTicker_symbol(String ticker_symbol) {
+        this.ticker_symbol = ticker_symbol;
+    }
     
-    private long stockDtMapId;
-
-    public long getStockDtMapId() {
-        return stockDtMapId;
+    public String getTicker_name() {
+        return ticker_name;
     }
-
-    public void setStockDtMapId(long stockDtMapId) {
-        this.stockDtMapId = stockDtMapId;
+    
+    public void setTicker_name(String ticker_name) {
+        this.ticker_name = ticker_name;
     }
-
-    public long getHistoricalId() {
-        return historicalId;
+    
+    public String getHistorical_date() {
+        return historical_date;
     }
-
-    public void setHistoricalId(long historicalId) {
-        this.historicalId = historicalId;
+    
+    public void setHistorical_date(String historical_date) {
+        this.historical_date = historical_date;
     }
 
     public BigDecimal getOpen() {
@@ -90,7 +110,7 @@ public class StockHistorical implements Serializable {
     
     @Override
 	public String toString() {
-		return "StockHistorical [historicalId=" + historicalId + ", open=" + open + ", high"
+		return "StockHistorical [source=" + source + ", ticker_symbol=" + ticker_symbol + ", ticker_name=" + ticker_name + ", historical_date=" + historical_date + ", open=" + open + ", high"
 				+ high + ", low=" + low + ", close=" + close + ", adjClose=" + adjClose
 				+ ", volume=" + volume  + "]";
 	}

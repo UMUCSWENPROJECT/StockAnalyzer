@@ -37,22 +37,24 @@ public class InvestopediaScraper extends StockScraper {
     private StockSummary summaryData;
     
     public InvestopediaScraper(){
-        super();
+        super("Investopedia");
     }
     
     /**
      * scrap summary data
      */
-    public void scrapeAllSummaryData(){
+    public void scrapeAllSummaryData() throws Exception{
         for(StockTicker stockTicker: stockTickers)
-            scrapeSingleSummaryData(stockTicker);
+            try{
+                scrapeSingleSummaryData(stockTicker);
+            }catch(Exception e){throw e;}
     }
     
     /**
      * Scrap summary data by stock ticker
      * @param stockTicker 
      */
-    public void scrapeSingleSummaryData(StockTicker stockTicker){        
+    public void scrapeSingleSummaryData(StockTicker stockTicker) throws Exception{        
         System.out.println("Scrapping: "+stockTicker.getSymbol());
         
         String url = "https://www.investopedia.com/markets/stocks/"+stockTicker.getSymbol().toLowerCase();
@@ -127,8 +129,10 @@ public class InvestopediaScraper extends StockScraper {
             }
         } catch (IOException ex) {
             Logger.getLogger(StockReporter.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
-            Logger.getLogger(InvestopediaScraper.class.getName()).log(Level.SEVERE, null, ex);
+            throw ex;
+        } catch (ParseException px) {
+            Logger.getLogger(InvestopediaScraper.class.getName()).log(Level.SEVERE, null, px);
+            throw px;
         }
     }
 }

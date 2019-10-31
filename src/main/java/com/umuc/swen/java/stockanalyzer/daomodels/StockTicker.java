@@ -10,17 +10,8 @@ package com.umuc.swen.java.stockanalyzer.daomodels;
  */
 public class StockTicker{ 
     
-    private long id;
     private String symbol;
-    private String name;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
+    private String ticker_name;
 
     public String getSymbol() {
         return symbol;
@@ -30,16 +21,16 @@ public class StockTicker{
         this.symbol = symbol;
     }
 
-    public String getName() {
-        return name;
+    public String getTicker_name() {
+        return ticker_name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String ticker_name) {
+        this.ticker_name = ticker_name;
     }
 
     @Override
     public String toString() {
-        return "StockTicker{" + "id=" + id + ", symbol=" + symbol + ", name=" + name + '}';
+        return "StockTicker{" + ", symbol=" + symbol + ", ticker_name=" + ticker_name + '}';
     }
 }

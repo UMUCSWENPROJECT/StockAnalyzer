@@ -41,7 +41,7 @@ public class YahooScraper extends StockScraper {
     private StockHistorical stockHistorical;
     
     public YahooScraper(){
-        super();
+        super("Yahoo");
     }
     
     /**
@@ -54,9 +54,11 @@ public class YahooScraper extends StockScraper {
     /**
      * Scrap historical data
      */
-    public void scrapeAllHistoricalData(){
+    public void scrapeAllHistoricalData() throws Exception{
         for(StockTicker stockTicker: stockTickers)
-            scrapeSingleHistoricalData(stockTicker);
+            try{
+                scrapeSingleHistoricalData(stockTicker);
+            }catch(Exception e){throw e;}
     }
     /**
      * Scrap summary data by stock ticker
@@ -74,17 +76,14 @@ public class YahooScraper extends StockScraper {
             }
             Date stockDate = new SimpleDateFormat("yyyy-MM-dd").parse(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
             if((latestScrappedDate!=null && stockDate.compareTo(latestScrappedDate) > 0) || latestScrappedDate == null){
-                StockDateMap stockDateMap = new StockDateMap();
-                stockDateMap.setSourceId(dao.getStockSourceIdByName(Constants.SCRAP_DATA_FROM_YAHOO));
-                stockDateMap.setTickerId(stockTicker.getId());
-                stockDateMap.setDate(new SimpleDateFormat("yyyy-MM-dd").format(stockDate));
-                int last_inserted_id = dao.insertStockDateMap(stockDateMap);
-
                 Element table1 = document.select("table").get(0);
                 Elements rows = table1.select("tr");    
                 summaryData = new StockSummary();
-
-                summaryData.setStockDtMapId(last_inserted_id);
+                
+                summaryData.setSource(dao.getStockSourceByName(Constants.SCRAP_DATA_FROM_YAHOO));
+                summaryData.setTicker_symbol(stockTicker.getSymbol());
+                summaryData.setTicker_name(stockTicker.getTicker_name());
+                summaryData.setStock_record_date(new SimpleDateFormat("yyyy-MM-dd").format(stockDate).toString());
 
                 int rowNum=0;
                 String prevClosePrice = rows.get(rowNum).select("td").get(1).text();
@@ -171,8 +170,9 @@ public class YahooScraper extends StockScraper {
     /**
      * Scrap historical data
      * @param stockTicker 
+     * @throws java.lang.Exception 
      */
-    public void scrapeSingleHistoricalData(StockTicker stockTicker){ 
+    public void scrapeSingleHistoricalData(StockTicker stockTicker) throws IOException, ParseException, Exception { 
         logger.log(Level.INFO,"Scrapping: "+stockTicker.getSymbol());
         
         String url = "https://finance.yahoo.com/quote/"+stockTicker.getSymbol().toLowerCase()+"/history?p="+stockTicker.getSymbol().toLowerCase();
@@ -193,34 +193,39 @@ public class YahooScraper extends StockScraper {
                 if(columns.size() == 7){
                     String date = columns.get(0).text();
                     Date stockDate = new SimpleDateFormat("yyyy-MM-dd").parse(new SimpleDateFormat("yyyy-MM-dd").format(new Date(date)));
-                    if((latestScrappedDate!=null && stockDate.compareTo(latestScrappedDate) > 0) || latestScrappedDate == null){
-                        StockDateMap stockDateMap = new StockDateMap();
-                        stockDateMap.setSourceId(dao.getStockSourceIdByName(Constants.SCRAP_DATA_FROM_YAHOO));
-                        stockDateMap.setTickerId(stockTicker.getId());
-                        stockDateMap.setDate(new SimpleDateFormat("yyyy-MM-dd").format(stockDate));
-                        int last_inserted_id = dao.insertStockDateMap(stockDateMap);
-                        stockHistorical.setStockDtMapId(last_inserted_id);
+                    if((latestHistoricalDate!=null && stockDate.compareTo(latestHistoricalDate) > 0) || latestHistoricalDate == null){
+                        try{
+                            stockHistorical.setSource(dao.getStockSourceByName(Constants.SCRAP_DATA_FROM_YAHOO));
+                            stockHistorical.setTicker_symbol(stockTicker.getSymbol());
+                            stockHistorical.setTicker_name(stockTicker.getTicker_name());
+                            stockHistorical.setHistorical_date(new SimpleDateFormat("yyyy-MM-dd").format(stockDate));
 
-                        String openPrice = columns.get(1).text();
-                        stockHistorical.setOpen(Utility.convertStringCurrency(Utility.isBlank(openPrice)?"0":openPrice));
-                        String high = columns.get(2).text();
-                        stockHistorical.setHigh(Utility.convertStringCurrency(Utility.isBlank(high)?"0":high));
-                        String low = columns.get(3).text();
-                        stockHistorical.setLow(Utility.convertStringCurrency(Utility.isBlank(low)?"0":low));
-                        String close = columns.get(4).text();
-                        stockHistorical.setClose(Utility.convertStringCurrency(Utility.isBlank(close)?"0":close));
-                        String adjClose = columns.get(5).text();
-                        stockHistorical.setAdjClose(Utility.convertStringCurrency(Utility.isBlank(adjClose)?"0":adjClose));
-                        String volume = columns.get(6).text();
-                        stockHistorical.setVolume(Utility.convertStringCurrency(Utility.isBlank(volume)?"0":volume).longValue());
-                        dao.insertStockHistoricalData(stockHistorical);
+                            String openPrice = columns.get(1).text();
+                            stockHistorical.setOpen(Utility.convertStringCurrency(Utility.isBlank(openPrice)?"0":openPrice));
+                            String high = columns.get(2).text();
+                            stockHistorical.setHigh(Utility.convertStringCurrency(Utility.isBlank(high)?"0":high));
+                            String low = columns.get(3).text();
+                            stockHistorical.setLow(Utility.convertStringCurrency(Utility.isBlank(low)?"0":low));
+                            String close = columns.get(4).text();
+                            stockHistorical.setClose(Utility.convertStringCurrency(Utility.isBlank(close)?"0":close));
+                            String adjClose = columns.get(5).text();
+                            stockHistorical.setAdjClose(Utility.convertStringCurrency(Utility.isBlank(adjClose)?"0":adjClose));
+                            String volume = columns.get(6).text();
+                            stockHistorical.setVolume(Utility.convertStringCurrency(Utility.isBlank(volume)?"0":volume).longValue());
+                            dao.insertStockHistoricalData(stockHistorical);
+                        }catch(Exception e){throw e;}
                     }
                 }
             }
         } catch (IOException ex) {
             logger.log(Level.SEVERE, ex.getLocalizedMessage());
-        } catch (ParseException ex) {
-            logger.log(Level.SEVERE, ex.getLocalizedMessage());
+            throw ex;
+        } catch (ParseException px) {
+            logger.log(Level.SEVERE, px.getLocalizedMessage());
+            throw px;
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, e.getLocalizedMessage()); 
+            throw e;
         }
     }    
 }

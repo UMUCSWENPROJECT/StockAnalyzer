@@ -15,13 +15,17 @@ import com.umuc.swen.java.stockanalyzer.daomodels.StockTicker;
  */
 public class StockScraper {
     
+    protected String source;
     protected StockDao dao;
     protected List<StockTicker> stockTickers;
     protected Date latestScrappedDate;
+    protected Date latestHistoricalDate;
     
-    public StockScraper(){
+    public StockScraper(String src){
+        source = src;
         dao = StockDao.getInstance();
         stockTickers = dao.getAllstockTickers();
-        latestScrappedDate = dao.getLatestScrappedDate();
+        latestScrappedDate = dao.getLatestScrappedDate(source);
+        latestHistoricalDate = dao.getLatestHistoricalScrappedDate();
     }
 }

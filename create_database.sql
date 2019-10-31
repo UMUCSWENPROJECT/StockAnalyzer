@@ -67,3 +67,15 @@ CREATE TABLE "HISTORICAL" (
     FOREIGN KEY (ticker_symbol)
     REFERENCES STOCK_TICKER (symbol)
 );
+
+CREATE TABLE "LOGS" (
+  "log_id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "source"  varchar(255) NOT NULL,
+  "start_date" text NOT NULL,
+  "end_date" text,
+  "status" varchar(255),
+  "log" text,
+  CONSTRAINT fk_sources_column
+    FOREIGN KEY (source)
+    REFERENCES STOCK_SOURCE (source_name)
+);
