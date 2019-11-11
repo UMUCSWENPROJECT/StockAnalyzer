@@ -8,6 +8,8 @@ import com.umuc.swen.java.stockanalyzer.scrappers.InvestopediaScraper;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Main class for scrapping the data
@@ -30,12 +32,12 @@ public class StockReporter {
         
         StockLogs stockLog = new StockLogs();
         stockLog.setStart_date(new SimpleDateFormat("yyyy-MM-dd-hhmmss").format(stockDateStart).toString());
-        
+        List<String> exceptionLogs = new ArrayList<String>();
         try{
             stockLog.setSource("Yahoo");
 
             logger.log(Level.INFO, "Scrap summary data for Yahoo...");
-            yahooScraper.scrapeAllSummaryData();
+            exceptionLogs = yahooScraper.scrapeAllSummaryData();
             Date stockDateEnd = null;
             try{
                 stockDateEnd = new SimpleDateFormat("yyyy-MM-dd-hhmmss").parse(new SimpleDateFormat("yyyy-MM-dd-hhmmss").format(new Date()));
@@ -43,17 +45,21 @@ public class StockReporter {
             stockLog.setEnd_date(new SimpleDateFormat("yyyy-MM-dd-hhmmss").format(stockDateEnd).toString());
             stockLog.setStatus("Success");
             stockLog.setLog("Yahoo scrapper completed successfully!");
-            dao.insertLog(stockLog);
+            if(!exceptionLogs.isEmpty()){
+                stockLog.setStatus("Failed");
+                stockLog.setLog("" + exceptionLogs);
+                dao.insertLog(stockLog);
+            }else{dao.insertLog(stockLog);}
             }catch(Exception e) {
                 logger.log(Level.WARNING, "Issue has occured and an exception was thorwn during Yahoo Scrape");
+                exceptionLogs.add(e.getMessage());
                 Date stockDateEnd = null;
                 try{
                     stockDateEnd = new SimpleDateFormat("yyyy-MM-dd-hhmmss").parse(new SimpleDateFormat("yyyy-MM-dd-hhmmss").format(new Date()));
                 }catch(ParseException pe) {logger.log(Level.WARNING, pe.getMessage());}
                 stockLog.setEnd_date(new SimpleDateFormat("yyyy-MM-dd-hhmmss").format(stockDateEnd).toString());
                 stockLog.setStatus("Failed");
-                stockLog.setLog(e.getMessage());
-                dao.insertLog(stockLog);
+                stockLog.setLog("" + exceptionLogs);
             }
             logger.log(Level.INFO, "Yahoo Scrape complete");
             
@@ -104,7 +110,7 @@ public class StockReporter {
             try{
                 stockLog.setSource("Investopedia");
                 
-                investopediaScraper.scrapeAllSummaryData();
+                exceptionLogs = investopediaScraper.scrapeAllSummaryData();
                 Date stockDateEnd = null;
                 
                 try{
@@ -113,7 +119,11 @@ public class StockReporter {
                 stockLog.setEnd_date(new SimpleDateFormat("yyyy-MM-dd-hhmmss").format(stockDateEnd).toString());
                 stockLog.setStatus("Success");
                 stockLog.setLog("Investopedia scrapper completed successfully!");
-                dao.insertLog(stockLog);
+                if(!exceptionLogs.isEmpty()){
+                    stockLog.setStatus("Failed");
+                    stockLog.setLog("" + exceptionLogs);
+                    dao.insertLog(stockLog);
+                }else{dao.insertLog(stockLog);}
             
             }catch(Exception e) {
                 logger.log(Level.WARNING, "Issue has occured and an exception was thorwn during Investopedia Scrape");

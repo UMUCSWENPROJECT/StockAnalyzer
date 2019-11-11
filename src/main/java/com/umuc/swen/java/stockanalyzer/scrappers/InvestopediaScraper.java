@@ -23,6 +23,8 @@ import com.umuc.swen.java.stockanalyzer.Constants;
 import com.umuc.swen.java.stockanalyzer.StockReporter;
 import com.umuc.swen.java.stockanalyzer.Utility;
 import com.umuc.swen.java.stockanalyzer.daomodels.StockDateMap;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Scrap stock financial data from investopedia
@@ -43,11 +45,20 @@ public class InvestopediaScraper extends StockScraper {
     /**
      * scrap summary data
      */
-    public void scrapeAllSummaryData() throws Exception{
-        for(StockTicker stockTicker: stockTickers)
-            try{
+    public List scrapeAllSummaryData() {
+        List<String> exceptionLogs = new ArrayList<String>();
+        int tickerCount = 0;
+
+            for(StockTicker stockTicker: stockTickers){
+               try{
                 scrapeSingleSummaryData(stockTicker);
-            }catch(Exception e){throw e;}
+                tickerCount++;
+                }catch(Exception e) {
+                    exceptionLogs.add(stockTickers.get(tickerCount).getSymbol() + ": " + e.getMessage());
+                    tickerCount++;
+                }
+            }
+        return exceptionLogs;
     }
     
     /**

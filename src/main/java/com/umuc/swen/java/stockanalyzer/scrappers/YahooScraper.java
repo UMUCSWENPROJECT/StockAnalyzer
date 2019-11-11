@@ -23,6 +23,8 @@ import com.umuc.swen.java.stockanalyzer.Constants;
 import com.umuc.swen.java.stockanalyzer.Utility;
 import com.umuc.swen.java.stockanalyzer.daomodels.StockDateMap;
 import com.umuc.swen.java.stockanalyzer.daomodels.StockHistorical;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -47,9 +49,20 @@ public class YahooScraper extends StockScraper {
     /**
      * Scrap summary data
      */
-    public void scrapeAllSummaryData(){
-        for(StockTicker stockTicker: stockTickers)
-            scrapeSingleSummaryData(stockTicker);
+    public List scrapeAllSummaryData() {
+        List<String> exceptionLogs = new ArrayList<String>();
+        int tickerCount = 0;
+
+            for(StockTicker stockTicker: stockTickers){
+               try{
+                scrapeSingleSummaryData(stockTicker);
+                tickerCount++;
+                }catch(Exception e) {
+                    exceptionLogs.add(stockTickers.get(tickerCount).getSymbol() + ": " + e.getMessage());
+                    tickerCount++;
+                }
+            }
+        return exceptionLogs;
     }
     /**
      * Scrap historical data
@@ -64,8 +77,8 @@ public class YahooScraper extends StockScraper {
      * Scrap summary data by stock ticker
      * @param stockTicker 
      */
-    public void scrapeSingleSummaryData(StockTicker stockTicker){     
-        logger.log(Level.INFO,"Scrapping: "+stockTicker.getSymbol());
+    public void scrapeSingleSummaryData(StockTicker stockTicker) throws IOException, ParseException, Exception {     
+        logger.log(Level.INFO, "Scrapping: {0}", stockTicker.getSymbol());
         
         String url = "https://finance.yahoo.com/quote/"+stockTicker.getSymbol().toLowerCase();
         try {
@@ -139,7 +152,7 @@ public class YahooScraper extends StockScraper {
                 rowNum++;
 
                 String eps = rows.get(rowNum).select("td").get(1).text();
-                summaryData.setEps(Utility.convertStringCurrency(Utility.isBlank(eps)?"0":eps));
+                    summaryData.setEps(Utility.convertStringCurrency(Utility.isBlank(eps)?"0":eps));
                 rowNum++;
 
                 String earningDate = rows.get(rowNum).select("td").get(1).text();
@@ -162,18 +175,25 @@ public class YahooScraper extends StockScraper {
             
         } catch (IOException ex) {
             logger.log(Level.SEVERE, ex.getLocalizedMessage());
-        } catch (ParseException ex) {
-            logger.log(Level.SEVERE, ex.getLocalizedMessage());
+            throw ex;
+        } catch (ParseException px) {
+            logger.log(Level.SEVERE, px.getLocalizedMessage());
+            throw px;
+        }catch (Exception e) {
+            logger.log(Level.SEVERE, e.getLocalizedMessage());
+            throw e;
         }
     }
     
     /**
      * Scrap historical data
      * @param stockTicker 
+     * @throws java.io.IOException 
+     * @throws java.text.ParseException 
      * @throws java.lang.Exception 
      */
     public void scrapeSingleHistoricalData(StockTicker stockTicker) throws IOException, ParseException, Exception { 
-        logger.log(Level.INFO,"Scrapping: "+stockTicker.getSymbol());
+        logger.log(Level.INFO, "Scrapping: {0}", stockTicker.getSymbol());
         
         String url = "https://finance.yahoo.com/quote/"+stockTicker.getSymbol().toLowerCase()+"/history?p="+stockTicker.getSymbol().toLowerCase();
         try {

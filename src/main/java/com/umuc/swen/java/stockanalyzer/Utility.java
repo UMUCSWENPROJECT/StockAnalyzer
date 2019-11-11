@@ -1,6 +1,8 @@
 package com.umuc.swen.java.stockanalyzer;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -20,17 +22,23 @@ public class Utility {
      * @return 
      */
     public static BigDecimal convertStringCurrency(String stringCurrency){
-        double doubleCurrency = 0;
+        BigDecimal doubleCurrency = BigDecimal.valueOf(0);
+        BigDecimal val = BigDecimal.valueOf(0);
         if (Character.isLetter(stringCurrency.charAt(stringCurrency.length()-1))){
             char letter = stringCurrency.charAt(stringCurrency.length()-1);
-            double thousands = getThousands(letter);
+            BigDecimal thousands = getThousands(letter);
             stringCurrency = stringCurrency.substring(0, stringCurrency.length()-1);
             doubleCurrency  = getDoubleCurrency(stringCurrency);
-            doubleCurrency*= thousands;
+            Logger.getLogger(Utility.class.getName()).log(Level.INFO, "Value of doubleCurrency is: {0}", doubleCurrency);
+            Logger.getLogger(Utility.class.getName()).log(Level.INFO, "Value of thousands is: {0}", thousands);
+            val = doubleCurrency.multiply(thousands);
+            Logger.getLogger(Utility.class.getName()).log(Level.INFO, "Value of val is: {0}", val);
+            
         }else{
             doubleCurrency  = getDoubleCurrency(stringCurrency);
+            val = doubleCurrency;
         }
-        return BigDecimal.valueOf(doubleCurrency);
+        return val;
     }
     
     /**
@@ -38,12 +46,18 @@ public class Utility {
      * @param letter
      * @return 
      */
-    public static double getThousands(char letter){
-        if (letter == 'M')
-            return 1000;
-        else if (letter == 'B')
-            return 1000000;
-        return 1;
+    public static BigDecimal getThousands(char letter){
+        switch (letter) {
+            case 'M':
+                return BigDecimal.valueOf(10).pow(6);
+            case 'B':
+                return BigDecimal.valueOf(10).pow(9);
+            case 'T':
+                return BigDecimal.valueOf(10).pow(12);
+            default:
+                break;
+        }
+        return BigDecimal.valueOf(1);
     }
     
     /**
@@ -51,13 +65,13 @@ public class Utility {
      * @param stringCurrency
      * @return 
      */
-    public static double getDoubleCurrency(String stringCurrency){
+    public static BigDecimal getDoubleCurrency(String stringCurrency){
         try {
-            return NumberFormat.getNumberInstance(java.util.Locale.US).parse(stringCurrency).doubleValue();
+            return BigDecimal.valueOf(NumberFormat.getNumberInstance(java.util.Locale.US).parse(stringCurrency).doubleValue());
         } catch (ParseException ex) {
             Logger.getLogger(StockReporter.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return 1;
+        return BigDecimal.valueOf(1);
     }
     public static String removeTrailingZero(double value){
         return new DecimalFormat("0.#").format(value);
