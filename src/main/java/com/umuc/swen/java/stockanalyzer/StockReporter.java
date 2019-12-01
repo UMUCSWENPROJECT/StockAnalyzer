@@ -3,8 +3,8 @@ package com.umuc.swen.java.stockanalyzer;
 import com.umuc.swen.java.stockanalyzer.daomodels.StockLogs;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import com.umuc.swen.java.stockanalyzer.scrappers.YahooScraper;
-import com.umuc.swen.java.stockanalyzer.scrappers.InvestopediaScraper;
+import com.umuc.swen.java.stockanalyzer.scrapers.YahooScraper;
+import com.umuc.swen.java.stockanalyzer.scrapers.InvestopediaScraper;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
- * Main class for scrapping the data
+ * Main class for scraping the data
  */
 public class StockReporter {
     
@@ -36,8 +36,8 @@ public class StockReporter {
         try{
             stockLog.setSource("Yahoo");
 
-            logger.log(Level.INFO, "Scrap summary data for Yahoo...");
-            exceptionLogs = yahooScraper.scrapeAllSummaryData();
+            logger.log(Level.INFO, "Scrapesummary data for Yahoo...");
+            exceptionLogs = yahooScraper.scrapeAllSummaryData("Yahoo");
             Date stockDateEnd = null;
             try{
                 stockDateEnd = new SimpleDateFormat("yyyy-MM-dd-hhmmss").parse(new SimpleDateFormat("yyyy-MM-dd-hhmmss").format(new Date()));
@@ -51,7 +51,7 @@ public class StockReporter {
                 dao.insertLog(stockLog);
             }else{dao.insertLog(stockLog);}
             }catch(Exception e) {
-                logger.log(Level.WARNING, "Issue has occured and an exception was thorwn during Yahoo Scrape");
+                logger.log(Level.WARNING, "Issue has occured and an exception was thorwn during Yahoo Scrap");
                 exceptionLogs.add(e.getMessage());
                 Date stockDateEnd = null;
                 try{
@@ -61,9 +61,10 @@ public class StockReporter {
                 stockLog.setStatus("Failed");
                 stockLog.setLog("" + exceptionLogs);
             }
+            dao.createViews();
             logger.log(Level.INFO, "Yahoo Scrape complete");
             
-            logger.log(Level.INFO, "Scrap historical data for Yahoo...");
+            logger.log(Level.INFO, "Scrapehistorical data for Yahoo...");
             
             try{
                 stockDateStart = new SimpleDateFormat("yyyy-MM-dd-hhmmss").parse(new SimpleDateFormat("yyyy-MM-dd-hhmmss").format(new Date()));
@@ -73,7 +74,7 @@ public class StockReporter {
             try{
                 stockLog.setSource("Historical - Yahoo");
                 
-                yahooScraper.scrapeAllHistoricalData();
+                yahooScraper.scrapeAllHistoricalData("Yahoo");
                 
                 Date stockDateEnd = null;
                 
@@ -100,7 +101,7 @@ public class StockReporter {
             
             InvestopediaScraper investopediaScraper = new InvestopediaScraper();
             
-            logger.log(Level.INFO, "Scrap summary data for Investopedia...");
+            logger.log(Level.INFO, "Scrapesummary data for Investopedia...");
             
             try{
                 stockDateStart = new SimpleDateFormat("yyyy-MM-dd-hhmmss").parse(new SimpleDateFormat("yyyy-MM-dd-hhmmss").format(new Date()));

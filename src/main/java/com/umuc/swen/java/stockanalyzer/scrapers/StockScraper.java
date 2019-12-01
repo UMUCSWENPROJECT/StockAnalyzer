@@ -3,8 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.umuc.swen.java.stockanalyzer.scrappers;
-import com.umuc.swen.java.stockanalyzer.scrappers.*;
+package com.umuc.swen.java.stockanalyzer.scrapers;
 import java.util.Date;
 import java.util.List;
 import com.umuc.swen.java.stockanalyzer.StockDao;
@@ -18,14 +17,21 @@ public class StockScraper {
     protected String source;
     protected StockDao dao;
     protected List<StockTicker> stockTickers;
-    protected Date latestScrappedDate;
+    protected Date latestScrapedDate;
     protected Date latestHistoricalDate;
     
     public StockScraper(String src){
         source = src;
         dao = StockDao.getInstance();
         stockTickers = dao.getAllstockTickers();
-        latestScrappedDate = dao.getLatestScrappedDate(source);
-        latestHistoricalDate = dao.getLatestHistoricalScrappedDate();
+        latestScrapedDate = dao.getLatestScrapedDate(source);
+        latestHistoricalDate = dao.getLatestHistoricalScrapedDate();
+    }
+    
+    public void setLatestScrapedDate(Date latestScrapedDate) {
+        this.latestScrapedDate = latestScrapedDate;
+    }
+    public void setLatestHistoricalDate(Date latestHistoricalDate) {
+        this.latestHistoricalDate = latestHistoricalDate;
     }
 }

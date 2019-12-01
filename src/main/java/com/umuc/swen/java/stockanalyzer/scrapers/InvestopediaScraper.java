@@ -3,9 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.umuc.swen.java.stockanalyzer.scrappers;
+package com.umuc.swen.java.stockanalyzer.scrapers;
 
-import com.umuc.swen.java.stockanalyzer.scrappers.*;
 import java.io.IOException;
 import java.text.ParseException;
 import com.umuc.swen.java.stockanalyzer.daomodels.StockSummary;
@@ -27,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Scrap stock financial data from investopedia
+ * Scrapestock financial data from investopedia
  */
 public class InvestopediaScraper extends StockScraper {
     
@@ -43,7 +42,7 @@ public class InvestopediaScraper extends StockScraper {
     }
     
     /**
-     * scrap summary data
+     * scrapesummary data
      */
     public List scrapeAllSummaryData() {
         List<String> exceptionLogs = new ArrayList<String>();
@@ -62,11 +61,11 @@ public class InvestopediaScraper extends StockScraper {
     }
     
     /**
-     * Scrap summary data by stock ticker
+     * Scrapesummary data by stock ticker
      * @param stockTicker 
      */
     public void scrapeSingleSummaryData(StockTicker stockTicker) throws Exception{        
-        System.out.println("Scrapping: "+stockTicker.getSymbol());
+        System.out.println("Scraping: "+stockTicker.getSymbol());
         
         String url = "https://www.investopedia.com/markets/stocks/"+stockTicker.getSymbol().toLowerCase();
         try {
@@ -76,18 +75,17 @@ public class InvestopediaScraper extends StockScraper {
             document = jsoupConn.referrer("http://www.google.com") .timeout(1000*10).get();
             }
             Date stockDate = new SimpleDateFormat("yyyy-MM-dd").parse(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
-            if((latestScrappedDate!=null && stockDate.compareTo(latestScrappedDate) > 0) || latestScrappedDate == null){
+            if((latestScrapedDate!=null && stockDate.compareTo(latestScrapedDate) > 0) || latestScrapedDate == null){
                 StockDateMap stockDateMap = new StockDateMap();
-                stockDateMap.setSourceId(dao.getStockSourceIdByName(Constants.SCRAP_DATA_FROM_INVESTOPEDIA));
-                stockDateMap.setTickerId(stockTicker.getId());
+                //stockDateMap.setSourceId(dao.getStockSourceIdByName(Constants.SCRAPE_DATA_FROM_INVESTOPEDIA));
+                //stockDateMap.setTickerId(stockTicker.getId());
                 stockDateMap.setDate(new SimpleDateFormat("yyyy-MM-dd").format(stockDate));
-                int last_inserted_id = dao.insertStockDateMap(stockDateMap);
 
                 Element table2 = document.select("table").get(2);
                 Elements rows = table2.select("tr");    
                 summaryData = new StockSummary();
 
-                summaryData.setStockDtMapId(last_inserted_id);
+                //summaryData.setStockDtMapId(last_inserted_id);
 
                 int rowNum=0;
                 String prevClosePrice = rows.get(rowNum).select("td").get(1).text();
